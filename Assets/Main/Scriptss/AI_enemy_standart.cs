@@ -24,6 +24,7 @@ public class AI_enemy_standart : Game_character_abstract
         base.Start();
         NavMeshAgent_.speed = Speed_movement;
         Health_script.Killer_attack_delegate += New_target_killer;
+        New_target(Game_administrator.Instance.Find_out_Player_script.transform);
     }
 
     private void OnTriggerStay(Collider other)
@@ -34,6 +35,10 @@ public class AI_enemy_standart : Game_character_abstract
         }
     }
 
+    private void OnEnable()
+    {
+        Game_administrator.Instance.Add_enemy_list(transform);
+    }
 
     /// <summary>
     /// Назначить целью атакующего персонажа
@@ -52,7 +57,7 @@ public class AI_enemy_standart : Game_character_abstract
     /// <param name="_target">Цель</param>
     void New_target(Transform _target)
     {
-        if (_target.tag == "Player" && Health_script.Find_out_Alive)
+        if (Health_script.Find_out_Alive)
         {
             Target = _target;
 
@@ -93,10 +98,14 @@ public class AI_enemy_standart : Game_character_abstract
     /// </summary>
     void Move()
     {
-        NavMeshAgent_.isStopped = false;
-        NavMeshAgent_.SetDestination(Target.position);
-        Anim.SetBool("Attack", false);
-        Anim.SetBool("Move", true);
+        if (Control_bool)
+        {
+            NavMeshAgent_.isStopped = false;
+            NavMeshAgent_.SetDestination(Target.position);
+            Anim.SetBool("Attack", false);
+            Anim.SetBool("Move", true);
+        }
+
     }
 
 
@@ -194,6 +203,17 @@ public class AI_enemy_standart : Game_character_abstract
         base.Dead();
         NavMeshAgent_.isStopped = true;
         NavMeshAgent_.enabled = false;
+
+        if (Game_administrator.Instance != null)
+            Game_administrator.Instance.Remove_enemy_list(transform);
+
+        StartCoroutine(Coroutine_Auto_destroy());
+    }
+
+    IEnumerator Coroutine_Auto_destroy()
+    {
+        yield return new WaitForSeconds(5);
+        Destroy(gameObject);
     }
 
 }

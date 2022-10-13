@@ -69,6 +69,7 @@ public class Game_administrator : Singleton<Game_administrator>
     public void Add_enemy_list(Transform _enemy)
     {
         Enemy_list.Add(_enemy);
+        Player_sc.New_enemy_target();
     }
 
     public void Remove_enemy_list(Transform _enemy)

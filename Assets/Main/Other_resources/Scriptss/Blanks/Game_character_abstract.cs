@@ -142,6 +142,19 @@ public abstract class Game_character_abstract : Game_object_abstract
     {
         Anim.SetTrigger(param);
     }
+
+
+    /// <summary>
+    /// Узнать о положение головы
+    /// </summary>
+    public Transform Find_out_Head
+    {
+        get
+        {
+            return Head;
+        }
+    }
+
     #endregion
 
 }

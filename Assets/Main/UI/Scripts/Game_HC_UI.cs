@@ -30,6 +30,11 @@ public class Game_HC_UI : Singleton<Game_HC_UI>
     [SerializeField]
     Image Health_image = null;
 
+    [Tooltip("Прицел игрока")]
+    [SerializeField]
+    Image Aim_image = null;
+
+
     private void Start()
     {
         Game_administrator.Player_Health_info_event.AddListener(Change_health);
@@ -64,6 +69,16 @@ public class Game_HC_UI : Singleton<Game_HC_UI>
     public void Change_health(float _value)
     {
         Health_image.fillAmount = _value;
+    }
+
+
+    /// <summary>
+    /// Изменить размер прицела
+    /// </summary>
+    /// <param name="_value">Значение размера</param>
+    public void Change_size_aim(float _value)
+    {
+        Aim_image.transform.localScale = Vector3.one * _value;
     }
 
 }
