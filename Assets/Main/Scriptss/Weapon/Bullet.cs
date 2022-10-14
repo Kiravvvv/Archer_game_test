@@ -34,6 +34,10 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     LayerMask Layer_detected = 0;
 
+    [Tooltip("Режим триггера (выключает пробрасывание рейкаста)")]
+    [SerializeField]
+    bool Trigger_mode_bool = false;
+
     bool Active_bool = true;
 
 
@@ -56,14 +60,26 @@ public class Bullet : MonoBehaviour
     bool No_time_destroy = false;
 
 
+
     private void Start()
     {
         Body.AddForce(transform.forward * Speed_bullet);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (Trigger_mode_bool)
+        {
+            if (other.GetComponent<I_damage>() != null)
+            {
+                other.GetComponent<I_damage>().Damage();
+            }
+        }
+    }
+
     private void Update()
     {
-        if (Active_bool)
+        if (Active_bool && !Trigger_mode_bool)
         {
             Raycast_preparation();
         }

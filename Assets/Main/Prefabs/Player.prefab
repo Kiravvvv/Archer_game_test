@@ -337,6 +337,8 @@ MonoBehaviour:
   Fire_point: {fileID: 831249280410191084}
   Bullet_prefab: {fileID: 5461044549736229217, guid: 324218c0518b99240a8c453ca7d3ca1c,
     type: 3}
+  Super_Bullet_prefab: {fileID: 5461044549736229217, guid: 9bce040108346bb40a60c405673af02a,
+    type: 3}
   Spread: 10
 --- !u!1 &831249280410191087
 GameObject:

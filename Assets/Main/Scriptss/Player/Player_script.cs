@@ -162,7 +162,9 @@ public class Player_script : MonoBehaviour
             Attack_bool = false;
             Stamina_active -= Cost_stamina_attack;
             Stamina_value_image.fillAmount = Stamina_active / Stamina;
+
             Fire();
+            
             Anim.Play("Aim Recoil");
             for (int x = 0; x < End_charger_bool_array.Length; x++)
             {
@@ -182,10 +184,18 @@ public class Player_script : MonoBehaviour
             Charger_value = 1;
 
         if (Target)
-        Weapon_script.Fire(Target.position, 1f - Charger_value, Step_damage_array[Step_attack_fin]);
+        {
+            Weapon_script.New_target(Target);
+            Weapon_script.Fire(Target.position, 1f - Charger_value, Step_damage_array[Step_attack_fin]);
+        }
         else
             Weapon_script.Fire(1f - Charger_value);
     }
+
+
+
+
+
 
     /// <summary>
     /// Поворот в сторону цели
@@ -211,6 +221,16 @@ public class Player_script : MonoBehaviour
             Camera_tracking_script.New_look_target(Target);
         }
 
+    }
+
+
+    /// <summary>
+    /// Активировать особую атаку
+    /// </summary>
+    /// <param name="_id_super_attack"></param>
+    public void Activation_super_attack(int _id_super_attack)
+    {
+        Weapon_script.Mode_attack(_id_super_attack);
     }
 
     #endregion

@@ -2512,7 +2512,7 @@ MonoBehaviour:
   Speed_rotation: 360
   Jump_force: 100
   NavMeshAgent_: {fileID: 2230510380992926178}
-  Distance_attack: 1
+  Distance_attack: 2
 --- !u!195 &2230510380992926178
 NavMeshAgent:
   m_ObjectHideFlags: 0

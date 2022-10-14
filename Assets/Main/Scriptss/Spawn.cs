@@ -17,6 +17,12 @@ public class Spawn : MonoBehaviour
     [SerializeField]
     float Time_spawn = 1f;
 
+    [Tooltip("Сколько всего заспавнит перед окончанием")]
+    [SerializeField]
+    int Max_spawn = 10;
+
+    int Spawn_active = 0;
+
     private void Start()
     {
         Game_administrator.Start_game_event.AddListener(Start_game);
@@ -36,9 +42,13 @@ public class Spawn : MonoBehaviour
 
     IEnumerator Coroutine_Time_spawn()
     {
-        yield return new WaitForSeconds(Time_spawn);
-        Spawn_enemy();
-        StartCoroutine(Coroutine_Time_spawn());
+        while (Spawn_active < Max_spawn)
+        {
+            yield return new WaitForSeconds(Time_spawn);
+            Spawn_enemy();
+            Spawn_active++;
+        }
+        Game_administrator.Instance.End_spawn();
     }
 
 }

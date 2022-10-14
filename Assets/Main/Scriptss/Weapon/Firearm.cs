@@ -14,6 +14,10 @@ public class Firearm : MonoBehaviour
     [SerializeField]
     Bullet Bullet_prefab = null;
 
+    [Tooltip("Префаб супер пули")]
+    [SerializeField]
+    Bullet Super_Bullet_prefab = null;
+
     [Tooltip("Разброс выстрела")]
     [SerializeField]
     float Spread = 0;
@@ -23,6 +27,10 @@ public class Firearm : MonoBehaviour
     int Damage = 0;
 
     Quaternion Default_rotation_Fire_point = Quaternion.identity;//Направление поворота точки спавна пули при старте
+
+    int Attack_mode_id = 0;
+
+    Transform Target = null;//Цель атаки
 
     private void Start()
     {
@@ -37,13 +45,126 @@ public class Firearm : MonoBehaviour
     {
         if (gameObject.activeSelf)
         {
-            if(Damage > 0)
-            Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation).Specify_settings(Damage);
-            else
-            Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation);
+            switch (Attack_mode_id)
+            {
+                case 0:
+                    Fire_normal();
+                break;
+
+                case 1:
+                    Fire_super_1();
+                    break;
+
+                case 2:
+                    Fire_super_2();
+                    break;
+
+                case 3:
+                    Fire_super_3();
+                    break;
+
+                case 4:
+                    Fire_super_4();
+                    break;
+            }
+
+            Attack_mode_id = 0;
         }
         
     }
+
+    void Fire_normal()
+    {
+        if (Damage > 0)
+            Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation).Specify_settings(Damage);
+        else
+            Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation);
+    }
+
+    void Fire_super_1()
+    {
+        StartCoroutine(Coroutine_super_attack());
+    }
+
+    IEnumerator Coroutine_super_attack()
+    {
+
+        for (int x = 0; x < 15; x++)
+        {
+            Fire_normal();
+
+            yield return new WaitForSeconds(0.01f);
+        }
+
+    }
+
+    void Fire_super_2()
+    {
+        Vector3 save_rotation = Fire_point.eulerAngles;
+
+        for (int x = 0; x < 6; x++)
+        {
+            Fire_point.rotation = Quaternion.Euler(save_rotation + new Vector3(0,2 * x,0));
+            Fire_normal();
+        }
+
+        for (int x = 1; x < 6; x++)
+        {
+            Fire_point.rotation = Quaternion.Euler(save_rotation + new Vector3(0, -1 * x, 0));
+            Fire_normal();
+        }
+    }
+
+    void Fire_super_3()
+    {
+        if (Damage > 0)
+            Instantiate(Super_Bullet_prefab, Fire_point.position, Fire_point.rotation).Specify_settings(Damage);
+        else
+            Instantiate(Super_Bullet_prefab, Fire_point.position, Fire_point.rotation);
+    }
+
+    void Fire_super_4()
+    {
+        float density = 0.3f;
+
+        Spawn_arrow_super_attack_4(new Vector3(0, 0, 0));
+
+        for (int x = 1; x < 5; x++)
+        {
+            for(int z = 1; z < 5; z++)
+            {
+                Spawn_arrow_super_attack_4(new Vector3(density * x, 0, 0));
+                Spawn_arrow_super_attack_4(new Vector3(-density * x, 0, 0));
+                Spawn_arrow_super_attack_4(new Vector3(0, 0, density * z));
+                Spawn_arrow_super_attack_4(new Vector3(0, 0, -density * z));
+            }
+        }
+
+        for (int x = 1; x < 5; x++)
+        {
+            for (int z = 1; z < 5; z++)
+            {
+                Spawn_arrow_super_attack_4(new Vector3(density * x, 0, density * z));
+                Spawn_arrow_super_attack_4(new Vector3(-density * x, 0, density * z));
+                Spawn_arrow_super_attack_4(new Vector3(density * x, 0, -density * z));
+                Spawn_arrow_super_attack_4(new Vector3(-density * x, 0, -density * z));
+            }
+        }
+
+    }
+
+    void Spawn_arrow_super_attack_4(Vector3 _position_addination)
+    {
+        Vector3 position_attack = (Target.position + (Vector3.up * (Random.Range(10, 15)))) + _position_addination;
+
+        Bullet bulet = null;
+
+        bulet = Instantiate(Bullet_prefab, position_attack, Quaternion.Euler(90, 0, 0));
+
+        if (Damage > 0)
+            bulet.Specify_settings(Damage);
+    }
+
 
     /// <summary>
     /// Стрельнуть с указанием урона для снаряда
@@ -122,6 +243,25 @@ public class Firearm : MonoBehaviour
     {
         Damage = _damage;
         Fire(_direction, _force_spead);
+    }
+
+
+    /// <summary>
+    /// Сменить режим атаки
+    /// </summary>
+    /// <param name="_id_mode">Режим атаки</param>
+    public void Mode_attack(int _id_mode)
+    {
+        Attack_mode_id = _id_mode;
+    }
+
+    /// <summary>
+    /// Новая цель
+    /// </summary>
+    /// <param name="_target">Цель</param>
+    public void New_target(Transform _target)
+    {
+        Target = _target;
     }
 
 }

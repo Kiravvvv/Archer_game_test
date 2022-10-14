@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 5461044549736229217}
   - component: {fileID: 5721230244067313065}
   - component: {fileID: 6296256400113451835}
+  - component: {fileID: 3586169789200319695}
   m_Layer: 6
-  m_Name: Arrow
+  m_Name: Super_Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 252197594094118213}
   m_LocalRotation: {x: -1, y: 0, z: 0, w: 0}
   m_LocalPosition: {x: -3.401, y: 0.365, z: 0.146}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 4, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -107,7 +108,7 @@ MonoBehaviour:
   Layer_detected:
     serializedVersion: 2
     m_Bits: 129
-  Trigger_mode_bool: 0
+  Trigger_mode_bool: 1
   Arrow_mode_bool: 1
   Time_destroy_arrow: 20
   No_time_destroy: 1
@@ -178,13 +179,13 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.07237205
-        inSlope: 0
-        outSlope: 0
+        value: 0.22454795
+        inSlope: -0.17904052
+        outSlope: -0.17904052
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.33333334
+        outWeight: 0.16139264
       - serializedVersion: 3
         time: 0.9999985
         value: 0
@@ -235,3 +236,16 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!65 &3586169789200319695
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252197594094118213}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.2, y: 0.2, z: 0.49}
+  m_Center: {x: 0.00000006891787, y: -0.000000018626451, z: 0.0124349445}

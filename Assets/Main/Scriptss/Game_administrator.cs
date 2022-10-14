@@ -53,6 +53,7 @@ public class Game_administrator : Singleton<Game_administrator>
 
     List<Transform> Enemy_list = new List<Transform>();
 
+    bool End_spawn_bool = false;
 
     /// <summary>
     /// Нормализовать время
@@ -78,6 +79,11 @@ public class Game_administrator : Singleton<Game_administrator>
 
         if(Enemy_list.Count > 0 && Player_sc != null)
         Player_sc.New_enemy_target();
+
+        if (End_spawn_bool && Enemy_list.Count == 0)
+        {
+            End_game(true);
+        }
     }
 
     public List<Transform> Find_out_Enemy_list
@@ -197,5 +203,13 @@ public class Game_administrator : Singleton<Game_administrator>
         Player_add_damage_event.Invoke();
     }
 
+
+    /// <summary>
+    /// Конец спавна
+    /// </summary>
+    public void End_spawn()
+    {
+        End_spawn_bool = true;
+    }
 
 }

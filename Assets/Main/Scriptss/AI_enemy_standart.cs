@@ -120,6 +120,8 @@ public class AI_enemy_standart : Game_character_abstract
             Additional_move_back();
             Anim.SetBool("Attack", true);
             Anim.SetBool("Move", false);
+
+            Game_administrator.Instance.End_game(false);
         }
 
     }
