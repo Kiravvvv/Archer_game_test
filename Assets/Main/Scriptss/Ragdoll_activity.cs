@@ -69,6 +69,10 @@ public class Ragdoll_activity : MonoBehaviour
     [SerializeField]
     float Time_Auto_get_up = 2f;
 
+    [Tooltip("Слой который будет применим для для HurtBox")]
+    [SerializeField]
+    int HurtBox_layer = 7;
+
     Transform[] Bones_array = new Transform[0];//Все кости
 
     Bone_transform[] Get_up_back_Bones_array = new Bone_transform[0];//Запоминание костей при подъёме лежа на спине (начало анимации)
@@ -91,6 +95,8 @@ public class Ragdoll_activity : MonoBehaviour
     [SerializeField]
     Health Health_script = null;
 
+    [HideInInspector]
+    [SerializeField]
     bool HurtBox_mode_bool = false;//Теперь части куклы считаются HurtBox'сами
 
     #endregion
@@ -440,6 +446,8 @@ public class Ragdoll_activity : MonoBehaviour
                 {
                     Collider_array[x].gameObject.AddComponent<HurtBox>().Add_Main_health(Health_script);
                 }
+
+                Collider_array[x].gameObject.layer = HurtBox_layer;
             }
             HurtBox_mode_bool = true;
             Activity_ragdoll(false);

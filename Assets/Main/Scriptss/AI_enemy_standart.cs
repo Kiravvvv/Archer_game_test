@@ -72,7 +72,7 @@ public class AI_enemy_standart : Game_character_abstract
     IEnumerator Update_target_coroutine()//Обновление реакции ИИ
     {
 
-        while (Target)
+        while (Target && Control_bool)
         {
             if (Vector3.Distance(Target.position, My_transform.position) > Distance_attack)
             {
@@ -114,11 +114,15 @@ public class AI_enemy_standart : Game_character_abstract
     /// </summary>
     void Stop_move_and_attack()
     {
-        NavMeshAgent_.isStopped = true;
-        Additional_rotation_look();
-        Additional_move_back();
-        Anim.SetBool("Attack", true);
-        Anim.SetBool("Move", false);
+        if (Control_bool)
+        {
+            NavMeshAgent_.isStopped = true;
+            Additional_rotation_look();
+            Additional_move_back();
+            Anim.SetBool("Attack", true);
+            Anim.SetBool("Move", false);
+        }
+
     }
 
 

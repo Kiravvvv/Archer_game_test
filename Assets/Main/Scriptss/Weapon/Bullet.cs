@@ -9,13 +9,14 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     Rigidbody Body = null;
 
+    [Tooltip("Коллайдер")]
+    [SerializeField]
+    Collider Collider_main = null;
+
     [Tooltip("Время до самоуничтожения")]
     [SerializeField]
     float Time_destroy = 10f;
 
-    [Tooltip("След от пули")]
-    [SerializeField]
-    GameObject Shot_mark = null;
 
     [Tooltip("Урон")]
     [SerializeField]
@@ -24,6 +25,14 @@ public class Bullet : MonoBehaviour
     [Tooltip("Скорость пули")]
     [SerializeField]
     float Speed_bullet = 150f;
+
+    [Tooltip("След от снаряда")]
+    [SerializeField]
+    TrailRenderer Trail = null;
+
+    [Tooltip("Самоуничтожение при столкновение")]
+    [SerializeField]
+    bool Destroy_detected_bool = false;
 
     Vector3 Start_scale = Vector3.one;
 
@@ -41,32 +50,69 @@ public class Bullet : MonoBehaviour
     public void Specify_settings(int _damage, float _bullet_flight_speed)
     {
         StartCoroutine(Destroy_coroutine());
+        Speed_bullet = _bullet_flight_speed;
         Damage = _damage;
         Body.velocity = Vector3.zero;
         Body.AddForce(transform.forward * _bullet_flight_speed);
     }
 
+    public void Specify_settings(int _damage)
+    {
+        Specify_settings(_damage, Speed_bullet);
+    }
+
+    public void Specify_settings(float _bullet_flight_speed)
+    {
+        Specify_settings(Damage, _bullet_flight_speed);
+    }
+
+
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.GetComponent<Health>())
+        if (other.gameObject.GetComponent<I_damage>() != null)
         {
-            other.gameObject.GetComponent<Health>().Damage_add(Damage, null);
+            other.gameObject.GetComponent<I_damage>().Damage(Damage, null);
         }
+
+        transform.SetParent(other.transform);
+
+        Off_rigidbody();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<I_damage>() != null)
+        {
+            other.gameObject.GetComponent<I_damage>().Damage(Damage, null);
+        }
+
+        transform.SetParent(other.transform);
+
+        Off_rigidbody();
+    }
+
+    void Off_rigidbody()
+    {
+        Body.isKinematic = true;
+        Body.velocity = Vector3.zero;
+
+        Collider_main.enabled = false;
+
+        if (Trail)
+        {
+            Trail.time = 0.1f;
+            Trail.emitting = false;
+        }
+
+        if (Destroy_detected_bool)
+            Destroy(gameObject);
         else
         {
-            if (Shot_mark)
-            {
-                ContactPoint contact = other.contacts[0];
-                Quaternion hit_rotation = Quaternion.FromToRotation(Vector3.forward, contact.normal);
-
-                GameObject obj = Instantiate(Shot_mark, contact.point + (contact.normal * 0.005f), hit_rotation);
-
-                float r = UnityEngine.Random.Range(0, 360);
-                obj.transform.Rotate(0, 0, r);
-            }
-
+            StopAllCoroutines();
+            Time_destroy = Time_destroy * 2;
+            StartCoroutine(Destroy_coroutine());
         }
-       Destroy(gameObject);
+
     }
 
     IEnumerator Destroy_coroutine()//Уничтожить пули спустя время
