@@ -26,7 +26,6 @@ public class AI_enemy_standart : Game_character_abstract
         Health_script.Killer_attack_delegate += New_target_killer;
         New_target(Game_administrator.Instance.Find_out_Player_script.transform);
     }
-
     private void OnTriggerStay(Collider other)
     {
         if(other.tag == "Player" && !Game_calculator.Checking_obstacles_between_two_objects(Head, other.transform, 8))

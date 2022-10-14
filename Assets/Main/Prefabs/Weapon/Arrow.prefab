@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 591146708788871167}
   - component: {fileID: 4583529011523579994}
   - component: {fileID: 1765129648202548368}
-  - component: {fileID: 5035143032831750114}
   - component: {fileID: 5461044549736229217}
   - component: {fileID: 5721230244067313065}
   - component: {fileID: 6296256400113451835}
@@ -87,19 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5035143032831750114
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 252197594094118213}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.04, y: 0.04, z: 0.24738675}
-  m_Center: {x: 0.000000067055225, y: -0.000000018626451, z: -0.0128284395}
 --- !u!114 &5461044549736229217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,13 +98,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71fa5c4d26853424daa9497ab32feec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 5721230244067313065}
-  Collider_main: {fileID: 5035143032831750114}
-  Time_destroy: 10
   Damage: 10
   Speed_bullet: 800
   Trail: {fileID: 6296256400113451835}
-  Destroy_detected_bool: 0
+  Body: {fileID: 5721230244067313065}
+  Time_destroy: 10
+  Distance_raycast_detected: 0.5
+  Layer_detected:
+    serializedVersion: 2
+    m_Bits: 129
+  Arrow_mode_bool: 1
+  Time_destroy_arrow: 20
+  No_time_destroy: 1
 --- !u!54 &5721230244067313065
 Rigidbody:
   m_ObjectHideFlags: 0

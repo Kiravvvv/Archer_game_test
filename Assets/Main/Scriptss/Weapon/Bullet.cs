@@ -5,24 +5,12 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Tooltip("Физика")]
-    [SerializeField]
-    Rigidbody Body = null;
-
-    [Tooltip("Коллайдер")]
-    [SerializeField]
-    Collider Collider_main = null;
-
-    [Tooltip("Время до самоуничтожения")]
-    [SerializeField]
-    float Time_destroy = 10f;
-
 
     [Tooltip("Урон")]
     [SerializeField]
     int Damage = 10;//Урон от пули
 
-    [Tooltip("Скорость пули")]
+    [Tooltip("Скорость снаряда")]
     [SerializeField]
     float Speed_bullet = 150f;
 
@@ -30,16 +18,92 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     TrailRenderer Trail = null;
 
-    [Tooltip("Самоуничтожение при столкновение")]
+    [Tooltip("Физика")]
     [SerializeField]
-    bool Destroy_detected_bool = false;
+    Rigidbody Body = null;
 
-    Vector3 Start_scale = Vector3.one;
+    [Tooltip("Время до самоуничтожения")]
+    [SerializeField]
+    float Time_destroy = 10f;
+
+    [Tooltip("Дальность проверки перед собой лучом")]
+    [SerializeField]
+    float Distance_raycast_detected = 0.5f;
+
+    [Tooltip("Слои с которыми будет взаимодействовать")]
+    [SerializeField]
+    LayerMask Layer_detected = 0;
+
+    bool Active_bool = true;
+
+
+
+
+
+    [Space(20)]
+    [Header("Режим стрелы")]
+
+    [Tooltip("Включить режим стрелы (будет застревать и не уничтожатся при контакте)")]
+    [SerializeField]
+    bool Arrow_mode_bool = false;
+
+    [Tooltip("Время до самоуничтожения после застревания стрелы")]
+    [SerializeField]
+    float Time_destroy_arrow = 20f;
+
+    [Tooltip("Выключает таймер самоуничтожения для застрявшей стрелы")]
+    [SerializeField]
+    bool No_time_destroy = false;
+
 
     private void Start()
     {
         Body.AddForce(transform.forward * Speed_bullet);
-        Start_scale = transform.localScale;
+    }
+
+    private void Update()
+    {
+        if (Active_bool)
+        {
+            Raycast_preparation();
+        }
+    }
+
+    /// <summary>
+    /// Пускать рейкаст вперёд, для проверки
+    /// </summary>
+    void Raycast_preparation()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, Distance_raycast_detected, Layer_detected))
+        {
+
+            if (hit.transform.GetComponent<I_damage>() != null)
+            {
+                hit.transform.GetComponent<I_damage>().Damage(Damage);
+            }
+
+            if (Arrow_mode_bool)
+            {
+                Off_rigidbody_arrow();
+
+                transform.position = hit.point;
+
+                //transform.rotation = Quaternion.LookRotation(-hit.normal);//Поворот по нормале сопрокосновения
+
+                transform.SetParent(hit.transform, true);
+
+                
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+
+
+            Active_bool = false;
+        }
     }
 
     /// <summary>
@@ -66,37 +130,13 @@ public class Bullet : MonoBehaviour
         Specify_settings(Damage, _bullet_flight_speed);
     }
 
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.GetComponent<I_damage>() != null)
-        {
-            other.gameObject.GetComponent<I_damage>().Damage(Damage, null);
-        }
-
-        transform.SetParent(other.transform);
-
-        Off_rigidbody();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.GetComponent<I_damage>() != null)
-        {
-            other.gameObject.GetComponent<I_damage>().Damage(Damage, null);
-        }
-
-        transform.SetParent(other.transform);
-
-        Off_rigidbody();
-    }
-
-    void Off_rigidbody()
+    /// <summary>
+    /// Остановить стрелу
+    /// </summary>
+    void Off_rigidbody_arrow()
     {
         Body.isKinematic = true;
         Body.velocity = Vector3.zero;
-
-        Collider_main.enabled = false;
 
         if (Trail)
         {
@@ -104,18 +144,22 @@ public class Bullet : MonoBehaviour
             Trail.emitting = false;
         }
 
-        if (Destroy_detected_bool)
-            Destroy(gameObject);
-        else
-        {
             StopAllCoroutines();
-            Time_destroy = Time_destroy * 2;
+
+        if (!No_time_destroy)
+        {
+            Time_destroy = Time_destroy_arrow;
             StartCoroutine(Destroy_coroutine());
         }
 
+
     }
 
-    IEnumerator Destroy_coroutine()//Уничтожить пули спустя время
+    /// <summary>
+    /// Уничтожить пули спустя время
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator Destroy_coroutine()
     {
         yield return new WaitForSeconds(Time_destroy);
         Destroy(gameObject);
