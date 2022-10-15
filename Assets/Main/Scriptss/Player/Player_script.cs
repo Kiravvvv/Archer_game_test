@@ -183,13 +183,19 @@ public class Player_script : MonoBehaviour
         if (Charger_value > 1)
             Charger_value = 1;
 
+        Weapon_script.Fire(Step_damage_array[Step_attack_fin]);
+
+        /*
         if (Target)
         {
             Weapon_script.New_target(Target);
-            Weapon_script.Fire(Target.position, 1f - Charger_value, Step_damage_array[Step_attack_fin]);
+            //Weapon_script.Fire(Target.position, 1f - Charger_value, Step_damage_array[Step_attack_fin]);
+            Weapon_script.Fire(Game_HC_UI.Instance.Aim_spread_random_point(), Step_damage_array[Step_attack_fin]);
+            
         }
         else
             Weapon_script.Fire(1f - Charger_value);
+        */
     }
 
 
@@ -231,6 +237,18 @@ public class Player_script : MonoBehaviour
     public void Activation_super_attack(int _id_super_attack)
     {
         Weapon_script.Mode_attack(_id_super_attack);
+    }
+
+
+    /// <summary>
+    /// Получить камеру
+    /// </summary>
+    public Camera Find_out_Camera
+    {
+        get
+        {
+            return Camera_tracking_script.GetComponent<Camera>();
+        }
     }
 
     #endregion

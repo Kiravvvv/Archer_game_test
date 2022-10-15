@@ -18,7 +18,11 @@ public class Firearm : MonoBehaviour
     [SerializeField]
     Bullet Super_Bullet_prefab = null;
 
-    [Tooltip("Разброс выстрела")]
+    [Tooltip("Разброс в зависимости от размера UI картинки прицела (параметр ниже работать не будет)")]
+    [SerializeField]
+    bool Aim_image_spread_bool = true;
+
+    [Tooltip("Разброс выстрела (Самопроизвольное изменение направления стрельбы путём изменения поворота Fire_point)")]
     [SerializeField]
     float Spread = 0;
 
@@ -32,49 +36,39 @@ public class Firearm : MonoBehaviour
 
     Transform Target = null;//Цель атаки
 
+    Camera Cam = null;
+
     private void Start()
     {
+        Cam = Game_administrator.Instance.Find_out_Player_script.Find_out_Camera;
         Spread_active = Spread;
         Default_rotation_Fire_point = Fire_point.localRotation;
     }
 
-    /// <summary>
-    /// Стрельнуть
-    /// </summary>
-    public void Fire()
-    {
-        if (gameObject.activeSelf)
-        {
-            switch (Attack_mode_id)
-            {
-                case 0:
-                    Fire_normal();
-                break;
-
-                case 1:
-                    Fire_super_1();
-                    break;
-
-                case 2:
-                    Fire_super_2();
-                    break;
-
-                case 3:
-                    Fire_super_3();
-                    break;
-
-                case 4:
-                    Fire_super_4();
-                    break;
-            }
-
-            Attack_mode_id = 0;
-        }
-        
-    }
-
     void Fire_normal()
     {
+        if (Aim_image_spread_bool)
+        {
+
+            Vector3 point_screen_point = Game_HC_UI.Instance.Aim_spread_random_point;
+
+            Vector3 finale_point = Vector3.zero;
+
+            Ray ray = Cam.ScreenPointToRay(point_screen_point);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                finale_point = hit.point;
+                print(hit.transform.name);
+            }
+            else
+            {
+                finale_point = ray.direction * 4000f;
+            }
+            Fire_point.transform.LookAt(finale_point, Fire_point.up);
+        }
+
         if (Damage > 0)
             Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation).Specify_settings(Damage);
         else
@@ -167,6 +161,44 @@ public class Firearm : MonoBehaviour
 
 
     /// <summary>
+    /// Стрельнуть
+    /// </summary>
+    public void Fire()
+    {
+        if (gameObject.activeSelf)
+        {
+            switch (Attack_mode_id)
+            {
+                case 0:
+                    Fire_normal();
+                    break;
+
+                case 1:
+                    Fire_super_1();
+                    break;
+
+                case 2:
+                    Fire_super_2();
+                    break;
+
+                case 3:
+                    Fire_super_3();
+                    break;
+
+                case 4:
+                    Fire_super_4();
+                    break;
+                default:
+                    Fire_normal();
+                    break;
+            }
+
+            Attack_mode_id = 0;
+        }
+
+    }
+
+    /// <summary>
     /// Стрельнуть с указанием урона для снаряда
     /// </summary>
     /// <param name="_damage"></param>
@@ -179,10 +211,10 @@ public class Firearm : MonoBehaviour
     /// <summary>
     /// Стрельба по направлению
     /// </summary>
-    /// <param name="_direction">Направление</param>
-    public void Fire(Vector3 _direction)
+    /// <param name="_point_end">Конечная точка (куда целится)</param>
+    public void Fire(Vector3 _point_end)
     {
-        Fire_point.transform.LookAt(_direction, Fire_point.up);
+        Fire_point.transform.LookAt(_point_end, Fire_point.up);
         Fire_point.transform.eulerAngles += new Vector3(Random.Range(-Spread_active, Spread_active), Random.Range(-Spread_active, Spread_active), Fire_point.transform.localRotation.z);
 
         Fire();
@@ -191,12 +223,12 @@ public class Firearm : MonoBehaviour
     /// <summary>
     /// Стрельба по направлению с указанием урона
     /// </summary>
-    /// <param name="_direction">Направление</param>
+    /// <param name="_point_end">Конечная точка (куда целится)</param>
     /// <param name="_damage">Урон</param>
-    public void Fire(Vector3 _direction, int _damage)
+    public void Fire(Vector3 _point_end, int _damage)
     {
         Damage = _damage;
-        Fire(_direction);
+        Fire(_point_end);
     }
 
     /// <summary>
@@ -225,24 +257,24 @@ public class Firearm : MonoBehaviour
     /// <summary>
     /// Выстрел по направлению и с силой разброса
     /// </summary>
-    /// <param name="_direction">Направление</param>
+    /// <param name="_point_end">Конечная точка (куда целится)</param>
     /// <param name="_force_spead">Сила разброса (от 0 до 1)</param>
-    public void Fire(Vector3 _direction, float _force_spead)
+    public void Fire(Vector3 _point_end, float _force_spead)
     {
         Spread_active = Spread * _force_spead;
-        Fire(_direction);
+        Fire(_point_end);
     }
 
     /// <summary>
     /// Выстрел по направлению, с силой разброса и ука
     /// </summary>
-    /// <param name="_direction">Направление</param>
+    /// <param name="_point_end">Конечная точка (куда целится)</param>
     /// <param name="_force_spead">Сила разброса (от 0 до 1)</param>
     /// <param name="_damage">Урон</param>
-    public void Fire(Vector3 _direction, float _force_spead, int _damage)
+    public void Fire(Vector3 _point_end, float _force_spead, int _damage)
     {
         Damage = _damage;
-        Fire(_direction, _force_spead);
+        Fire(_point_end, _force_spead);
     }
 
 
