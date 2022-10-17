@@ -100,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 10
   Speed_bullet: 800
+  Force_Repulsion: 1600
   Trail: {fileID: 6296256400113451835}
   Body: {fileID: 5721230244067313065}
   Time_destroy: 10
@@ -108,6 +109,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 129
   Trigger_mode_bool: 0
+  No_destroy_in_contact_bool: 0
   Arrow_mode_bool: 1
   Time_destroy_arrow: 20
   No_time_destroy: 1

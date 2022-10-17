@@ -14,6 +14,10 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     float Speed_bullet = 150f;
 
+    [Tooltip("Сила отбрасывание")]
+    [SerializeField]
+    float Force_Repulsion = 1f;
+
     [Tooltip("След от снаряда")]
     [SerializeField]
     TrailRenderer Trail = null;
@@ -37,6 +41,10 @@ public class Bullet : MonoBehaviour
     [Tooltip("Режим триггера (выключает пробрасывание рейкаста)")]
     [SerializeField]
     bool Trigger_mode_bool = false;
+
+    [Tooltip("Не уничтожается при контакте")]
+    [SerializeField]
+    bool No_destroy_in_contact_bool = false;
 
     bool Active_bool = true;
 
@@ -74,6 +82,16 @@ public class Bullet : MonoBehaviour
             {
                 other.GetComponent<I_damage>().Damage();
             }
+
+            if (other.transform.GetComponent<Rigidbody>())
+            {
+                other.transform.GetComponent<Rigidbody>().AddForce((other.transform.position - transform.position).normalized * Body.mass * Force_Repulsion);
+                print(Body.velocity * Body.mass);
+            }
+
+            if (!No_destroy_in_contact_bool)
+                Destroy(gameObject);
+
         }
     }
 
@@ -100,6 +118,14 @@ public class Bullet : MonoBehaviour
                 hit.transform.GetComponent<I_damage>().Damage(Damage);
             }
 
+            if (hit.transform.GetComponent<Rigidbody>())
+            {
+                //hit.transform.GetComponent<Rigidbody>().AddForce(Body.velocity * Body.mass * Force_Repulsion);
+                Vector3 direction = hit.point - Body.transform.position;
+                hit.transform.GetComponent<Rigidbody>().AddForceAtPosition(direction.normalized * Body.mass * Force_Repulsion, hit.point);
+            }
+                
+
             if (Arrow_mode_bool)
             {
                 Off_rigidbody_arrow();
@@ -112,7 +138,7 @@ public class Bullet : MonoBehaviour
 
                 
             }
-            else
+            else if(!No_destroy_in_contact_bool)
             {
                 Destroy(gameObject);
             }

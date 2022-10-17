@@ -38,6 +38,8 @@ public class Firearm : MonoBehaviour
 
     Camera Cam = null;
 
+    Vector3 Finale_point = Vector3.zero;//Точка куда попадает выстрел
+
     private void Start()
     {
         Cam = Game_administrator.Instance.Find_out_Player_script.Find_out_Camera;
@@ -47,27 +49,6 @@ public class Firearm : MonoBehaviour
 
     void Fire_normal()
     {
-        if (Aim_image_spread_bool)
-        {
-
-            Vector3 point_screen_point = Game_HC_UI.Instance.Aim_spread_random_point;
-
-            Vector3 finale_point = Vector3.zero;
-
-            Ray ray = Cam.ScreenPointToRay(point_screen_point);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                finale_point = hit.point;
-                print(hit.transform.name);
-            }
-            else
-            {
-                finale_point = ray.direction * 4000f;
-            }
-            Fire_point.transform.LookAt(finale_point, Fire_point.up);
-        }
 
         if (Damage > 0)
             Instantiate(Bullet_prefab, Fire_point.position, Fire_point.rotation).Specify_settings(Damage);
@@ -149,7 +130,7 @@ public class Firearm : MonoBehaviour
 
     void Spawn_arrow_super_attack_4(Vector3 _position_addination)
     {
-        Vector3 position_attack = (Target.position + (Vector3.up * (Random.Range(10, 15)))) + _position_addination;
+        Vector3 position_attack = (Finale_point + (Vector3.up * (Random.Range(10, 15)))) + _position_addination;
 
         Bullet bulet = null;
 
@@ -165,6 +146,27 @@ public class Firearm : MonoBehaviour
     /// </summary>
     public void Fire()
     {
+        if (Aim_image_spread_bool)
+        {
+
+            Vector3 point_screen_point = Game_HC_UI.Instance.Aim_spread_random_point;
+
+            Ray ray = Cam.ScreenPointToRay(point_screen_point);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                Finale_point = hit.point;
+                print(hit.transform.name);
+            }
+            else
+            {
+                Finale_point = ray.direction * 4000f;
+            }
+            Fire_point.transform.LookAt(Finale_point, Fire_point.up);
+        }
+
+
         if (gameObject.activeSelf)
         {
             switch (Attack_mode_id)
