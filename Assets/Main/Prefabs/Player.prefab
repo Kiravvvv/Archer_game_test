@@ -339,6 +339,7 @@ MonoBehaviour:
     type: 3}
   Super_Bullet_prefab: {fileID: 5461044549736229217, guid: 9bce040108346bb40a60c405673af02a,
     type: 3}
+  Aim_image_spread_bool: 1
   Spread: 10
 --- !u!1 &831249280410191087
 GameObject:
@@ -2330,7 +2331,7 @@ GameObject:
   - component: {fileID: 831249280060359593}
   - component: {fileID: 831249280060359592}
   - component: {fileID: 8826930110641617231}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
